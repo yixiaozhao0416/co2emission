@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map with Popup</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body, html, #map { margin: 0; padding: 0; width: 100%; height: 100%; }
+        .map-overlay { position: absolute; top: 10px; left: 10px; z-index: 1; background-color: rgba(255, 255, 255, 0.8); padding: 10px; }
+        /* Adjust overlay style as needed */
+    </style>
+    <style>
+  .legend {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 10px; 
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .legend-item span {
+    margin-right: 10px;
+  }
+
+  .legend-bar {
+    width: 25px; 
+    height: 10px;
+    border-radius: 5px;
+
+  }
+  }
+</style>
+    </head>
+    <head>
+    <style>
+        .circle-container {
+    display: flex;
+    align-items: center;
+}
+        .yellow-circle {
+            width: 20px; 
+            height: 20px; 
+            background-color: yellow;
+            border-radius: 50%; 
+            display: inline-block; 
+            margin-right: 10px; }
+            .big {
+    width: 25px;
+    height: 25px;
+}
+
+.medium {
+    width: 20px;
+    height: 20px;
+}
+
+.small {
+    width: 15px;
+    height: 15px;
+}
+
+.tiny {
+    width: 10px;
+    height: 10px;
+}
+
+.smallest {
+    width: 5px;
+    height: 5px;
+    flex-direction: row-reverse;
+    font-size: 5px; 
+    
+}
+        .circle-label {
+    margin-right: 10px; 
+             font-size: 5px;
+}
+    .new-icona {
+            background-image: url('https://github.com/yixiaozhao0416/digital-/raw/main/5328710.svg');
+            background-size: contain;
+            width: 40px;
+            height: 40px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+            .new-iconb{
+            background-image: url('https://github.com/yixiaozhao0416/digital-/raw/main/5328710.svg');
+            background-size: contain;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            margin-right: 5px;
+        }    .new-iconc {
+            background-image: url('https://github.com/yixiaozhao0416/digital-/raw/main/5328710.svg');
+            background-size: contain;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 5px;
+        }    .new-icond {
+            background-image: url('https://github.com/yixiaozhao0416/digital-/raw/main/5328710.svg');
+            background-size: contain;
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div id="map"></div>
+    
+    <div class='map-overlay top'>
+    <div class='map-overlay-inner'>
+        <h2>Comparison of global aircraft trips and Co2 emission</h2>
+		<table><tr><td>
+        <input id='slider' type='range' min='0' max='10' step='1' value='0' list='tickmarks' />
+        <datalist id="tickmarks">
+		  <option value="0" >
+		  <option value="1">
+		  <option value="2">
+		  <option value="3">
+		  <option value="4">
+		  <option value="5">
+		  <option value="6">
+		  <option value="7">
+		  <option value="8">
+		  <option value="9">
+		  <option value="10" >
+		  </datalist>
+		 </td>
+		 <td>
+		  <label id='Year'>2010</label>
+         </td>
+         </tr></table>
+              <div class="circle-container">
+    <div class="yellow-circle big"></div>
+    <div class="yellow-circle medium"></div>
+    <div class="yellow-circle small"></div>
+    <div class="yellow-circle tiny"></div>
+    <div class="yellow-circle smallest"></div>
+       <p class="credit" style="opacity: 0.5;font-size: 0.8em;">CO2 emissions (metric tons per capita) <a href=" https://github.com/yixiaozhao0416/digital-/raw/main/style.json"></a>.  
+            <div class="new-icona"></div>
+          <div class="new-iconb"></div>
+          <div class="new-iconc"></div>
+          <div class="new-icond"></div>
+        <p class="credit" style="opacity: 0.5;font-size: 0.8em;">Air transport, freight (million ton-km) <a href=" https://github.com/yixiaozhao0416/digital-/raw/main/style.json"></a>. 
+</div> <p class="map-description" style="opacity: 0.3;font-size: 0.1em;">The map's base color shades show the 10 years average of CO2 emissions for each country. The size of the airplane icon reflects the size of the average airplane route in each country.  By sliding the slider, you can find out the CO2 emissions for each year. Hovering over the airplane icon will display the airplane miles for each country from 2010 to 2020.</p>
+     
+
+  <div class="legend">
+        
+          <span style="color:  #2F4F4F;">Average of CO2 emissions</span>
+    <div class="legend-item">
+      <span style="color:  #556B2F">CO2 emission < 1    </span>
+      <div class="legend-bar" style="background-color: hsl(170, 38%, 58%)"></div>
+    </div>
+    <div class="legend-item">
+      <span style="color:  #556B2F">CO2 emission 1 - 10</span>
+      <div class="legend-bar" style="background-color: hsl(170, 40%, 46%)"></div>
+    </div>  
+        <div class="legend-item">
+      <span style="color:  #556B2F">CO2 emission 10 - 20</span>
+      <div class="legend-bar" style="background-color: hsl(170, 41%, 37%)"></div>
+    </div>
+          <div class="legend-item">
+      <span style="color:  #556B2F">CO2 emission 20 - 30</span>
+      <div class="legend-bar" style="background-color: hsl(170, 34%, 35%)"></div>
+    </div>
+    <div class="legend-item">
+      <span style="color:  #556B2F">CO2 emission > 30</span>
+      <div class="legend-bar" style="background-color: hsl(170, 39%, 23%)"></div>
+    </div>
+  </div>
+</body>
+</html>
+             
+</div>
+</div>
+
+        
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoieWl4aWFvemhhbyIsImEiOiJjbHI3cjZuNHowd2xsMmtweGduZXprZmZ6In0.PP8ZZ29_wQekzXNWsjV29w';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/yixiaozhao/cltln5fsv009101qo5nwb28dh',
+        center: [20.7, 22.1],
+        zoom: 1.73,
+        scrollZoom: true
+    });
+    
+     // Create an array of the available data years
+    var years = [
+        '2010',
+        '2011',
+        '2012',
+        '2013',
+        '2014',
+        '2015',
+        '2016',
+       	'2017',
+        '2018',
+        '2019',
+        '2020'
+    ];
+    
+ map.on('load', function() {
+                 // This is the main function that runs when the user changes the data year
+            function setYear(Year) {
+                
+                document.getElementById('Year').textContent = years[Year];  // Set the label to the correct year
+
+                var CO2 = map.getPaintProperty('copy','circle-radius');
+
+                console.log(CO2);
+                CO2.property = "CO2_emissions" + years[Year];  // update the pp circle-radius to the new column set by the user
+
+                map.setPaintProperty('copy','circle-radius',CO2);
+
+                console.log(map.getPaintProperty('copy','circle-radius'));
+                
+
+            var yearcol = "CO2_emissions" + String(years[year]);
+              
+            }
+     
+ // Add the proportional circle layer to the map
+            map.addLayer({
+                    id: 'copy',
+                    type: 'circle',
+                    source: {
+                      type: 'vector',
+                      url: 'mapbox://yixiaozhao.0naw4oz9' // Your Mapbox tileset Map ID
+                    },
+                    'source-layer': '7-1oyava', // name of tilesets
+                    'layout': {
+                        'visibility': 'visible'
+                    },
+                    paint: {
+                           'circle-color': '#FFFF00',
+                        'circle-opacity':0.5,
+                        'circle-stroke-width': {
+                    stops: [[8, 0.5], [13, 2], [16, 3]]
+                    },
+                        'circle-stroke-color': '#fffef7',
+                        'circle-stroke-opacity': 0.5,
+                        'circle-radius': {
+                            property: "CO2_emissions2010" , 
+                            stops: [
+                                [{zoom: 9, value: 0}, 2],
+                                [{zoom: 9, value: 10}, 8],
+                                  [{zoom: 9, value: 30}, 14],
+                                [{zoom: 12, value: 0}, 6],
+                                [{zoom: 12, value: 10}, 60],
+                                  [{zoom: 12, value: 30}, 80],
+                                [{zoom: 16, value: 0}, 8],
+                                [{zoom: 16, value: 10}, 140],
+                                      [{zoom: 16, value: 30}, 180],
+                                ]
+                        }}
+                
+                  });
+
+
+
+
+        // Assign an event listner to the slider so that the setYear function runs when the user changes the slider
+            document.getElementById('slider').addEventListener('input', function(e) {
+                var Year = parseInt(e.target.value);
+                setYear(Year);
+                });
+
+ // Additional code for popup and cursor behavior
+            var mypopup = new mapboxgl.Popup({offset:[150,50],closeButton: false});
+
+            // Another event listener that adds the popup when the user puts their cursor over the tube circles
+ // Another event listener that adds the popup when the user puts their cursor over the tube circles
+            map.on('mouseover', 'hpi-centr-3nhhu5 copy 1', function (e) {
+                    mypopup
+                        .setLngLat(e.features[0].geometry.coordinates)
+                        .setHTML("<h3>" + e.features[0].properties.CountryName + "</h3>Average Airtransport freight for from 2010 to 2020 is " + e.features[0].properties.AirtransportAverage + "million ton-km")
+                        .addTo(map);
+                });
+
+            // Change the cursor to a pointer when the mouse is over the stations layer.
+            map.on('mouseenter', 'hpi-centr-3nhhu5 copy 1', function () {
+                  map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves and remove the popup window.
+            map.on('mouseleave', 'hpi-centr-3nhhu5 copy 1', function () {
+                map.getCanvas().style.cursor = '';
+                mypopup.remove();
+            });
+
+
+
+
+    }); 
+
+
+</script>
+
+
+</body>
+</html>
